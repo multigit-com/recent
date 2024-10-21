@@ -1,0 +1,7 @@
+gitpython
+openai
+pyttsx3
+selenium
+ffmpeg-python
+python-dotenv
+webdriver-manager
