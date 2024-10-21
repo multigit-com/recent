@@ -1,10 +1,29 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
 ## [Unreleased]
 
+## [0.3.0] - 2024-10-21
+
 ### Added
-- Created `test_tts_docker.sh` script for testing the TTS Docker service.
-- Added instructions in README.md for running the TTS Docker service test.
+- Improved error handling in `report.py` for ChromeDriver initialization
+- Added fallback mechanism for specific ChromeDriver version in `report.py`
+- Enhanced logging in `report.py` for better debugging
+- Added TTS service health check and curl test in `init.sh`
+- Created `update_dependencies.sh` script for easier dependency management
+
+### Changed
+- Updated `initialize_driver()` function in `report.py` to handle ChromeDriver version mismatches
+- Modified `main()` function in `report.py` to continue processing repositories even if video generation fails for one
+- Updated `init.sh` to include more robust error handling and service readiness checks
+- Refactored `report.py` to use `ChromeService` instead of deprecated `Service`
+
+### Fixed
+- Resolved import issues with `webdriver_manager` in `report.py`
 
 ## [0.2.0] - 2023-12-15
 
@@ -42,3 +61,8 @@
 - Integration with OpenAI API for commit analysis.
 - Simple text-to-speech conversion for summaries.
 - Basic README with setup and usage instructions.
+
+[Unreleased]: https://github.com/yourusername/yourrepository/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/yourusername/yourrepository/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/yourusername/yourrepository/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/yourusername/yourrepository/releases/tag/v0.1.0

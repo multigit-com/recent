@@ -1,9 +1,9 @@
 gitpython
 openai
 pyttsx3
-selenium
+selenium==4.10.0
 ffmpeg-python
 python-dotenv
-webdriver-manager
+webdriver-manager==3.8.6
 requests
 

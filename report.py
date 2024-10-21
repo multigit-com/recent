@@ -8,7 +8,7 @@ from selenium import webdriver
 import ffmpeg
 from dotenv import load_dotenv
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.service import Service as ChromeService
 import requests
 import logging
 from datetime import datetime
@@ -40,14 +40,30 @@ logging.basicConfig(
     ]
 )
 
+logger = logging.getLogger(__name__)
+
 def initialize_driver():
-    chrome_service = Service(ChromeDriverManager().install())
+    try:
+        # Try to get the ChromeDriver version that matches the installed Chrome/Chromium version
+        chrome_service = ChromeService(ChromeDriverManager().install())
+    except Exception as e:
+        logging.error(f"Failed to initialize ChromeDriver: {str(e)}")
+        logging.info("Attempting to use a specific ChromeDriver version...")
+        # If automatic version matching fails, try a specific version
+        # You may need to adjust this version number to match your Chrome/Chromium version
+        chrome_service = ChromeService(ChromeDriverManager(version="114.0.5735.90").install())
+
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--headless')  # Run in headless mode
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
-    return driver
+    
+    try:
+        driver = webdriver.Chrome(service=chrome_service, options=chrome_options)
+        return driver
+    except Exception as e:
+        logging.error(f"Failed to create WebDriver instance: {str(e)}")
+        raise
 
 def get_default_branch(repo):
     repo.remotes.origin.fetch()
@@ -190,13 +206,18 @@ def main():
                     audio_file = os.path.join(output_folder, 'summary.mp3')
                     generate_audio(summary, audio_file)
                     
-                    video_file = os.path.join(output_folder, 'video.png')
-                    generate_video(repo_path, video_file)
-                    logging.info(f"Generated video (screenshot): {video_file}")
+                    try:
+                        video_file = os.path.join(output_folder, 'video.png')
+                        generate_video(repo_path, video_file)
+                        logging.info(f"Generated video (screenshot): {video_file}")
+                    except Exception as e:
+                        logging.error(f"Failed to generate video for {repo_name}: {str(e)}")
+                        logging.info("Continuing with the next repository...")
                     
                     logging.info(f"Completed processing for {repo_name}")
                 except Exception as e:
-                    logging.error(f"Error processing {repo_name}: {str(e)}")
+                    logger.error(f"Error processing {repo_name}: {str(e)}")
+                    logging.info("Continuing with the next repository...")
             else:
                 logging.warning(f"Skipping {repo_name} due to cloning/updating failure")
     except KeyboardInterrupt:
