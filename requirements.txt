@@ -5,3 +5,5 @@ selenium
 ffmpeg-python
 python-dotenv
 webdriver-manager
+requests
+
